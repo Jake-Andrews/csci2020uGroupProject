@@ -27,10 +27,15 @@ public class Controller {
     int Bust = 21;
     String drawnCard = "";
     List<Integer> cardList = new ArrayList<>();
+
+
+    //Should declare in fxml
     Label DealerTotal = new Label("Total: 0");
     Label PlayerTotal = new Label("Total: 0");
-    Button P1Hit = new Button("Hit");
-    Button P1Stand = new Button("Stand");
+    Button P1Hit = new Button();
+    Button P1Stand = new Button();
+
+
     FileInputStream blankFile;
 
     List<ImageView> playerImages = new ArrayList<ImageView>();
@@ -158,9 +163,11 @@ public class Controller {
         } else {
             playerTotalLabel.setText("Player Total: " + cardTotal);
         }
+        //doesnt do anything, doesn't refrence the button declare in fxml file
         if (hitCount == 2) {
             P1Hit.setDisable(true);
         }
+
         return cardTotal;
     }
 
@@ -192,6 +199,7 @@ public class Controller {
         } else {
             playerTotalLabel.setText("Player Total: " + cardTotal);
         }
+        //
         if (hitCount == 2) {
             P1Hit.setDisable(true);
         }
@@ -242,7 +250,7 @@ public class Controller {
         String temp = Integer.toString(playerCardTotal);
         //Sends something to the server, and gets a string back.
         System.out.println("Sending your score to the server.");
-        System.out.println(connection.sendMessage(temp));
+        System.out.println(connection.sendMessage("STAND," + temp));
 
         P1Stand.setDisable(true);
 

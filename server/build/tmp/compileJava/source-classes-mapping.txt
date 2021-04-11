@@ -1,8 +1,8 @@
 org/example/Main.java
  org.example.Main
-org/example/ClientHandler.java
- org.example.ClientHandler
 org/example/Controller.java
  org.example.Controller
+org/example/ClientHandler.java
+ org.example.ClientHandler
 org/example/BlackjackServer.java
  org.example.BlackjackServer

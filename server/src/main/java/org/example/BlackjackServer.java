@@ -9,10 +9,7 @@ import java.util.LinkedList;
 
 public class BlackjackServer {
     public static void start() {
-        /*
-    public static String SERVER_ADDRESS = "localhost";
-    public static int SERVER_PORT = 16789;
-        */
+        //Boilerplate code was ripped from lab10 demo for handler and server. Changed as needed.
         System.out.println("Started server");
         int port = 8001;
         try {
@@ -39,14 +36,27 @@ public class BlackjackServer {
             System.out.println("Now outside of the while loop");
             //need to change this, reading from terminal
             var in = new BufferedReader(new InputStreamReader(System.in));
-            //Read in from the socket
+            //Read in from terminal, poorly done
+
+            //Should comment this out, change in to something else
+
             String line;
             socketThread.start();
             //Read input, if it is \\q. then quit
-            while ((line = in.readLine()) == null || !line.equalsIgnoreCase("\\q"));
-            //interrupt the current thread from what it is doing.
+            while ((line = in.readLine()) == null || !line.equalsIgnoreCase("\\q")) {
+
+            };
+
+            //Somehow continue until there is a single thread alive.
+            //THe way it's done above will never close since there is no input from terminal
+            //We want our game to exit, once each thread is killed.
+            //Also we need our server to do stuff. Such as, server reads from thread, once every thread
+            //Has said recieved "READY", then we can send dealer cards to each user.
+            //while (socketThread.isAlive()) {};
+
+
             socketThread.interrupt();
-            //Interrupt every thread
+            //just removes the sockets, is fine
             while (!threads.isEmpty()) {
                 var t = threads.remove();
                 handlers.get(t.getId()).stop();
@@ -61,12 +71,3 @@ public class BlackjackServer {
         }
     }
 }
-
-
-/**
- * Lab 10 Demo: server.MessageServer
- *
- * @author Michael Valdron
- * created at 2021/03/30
- */
-

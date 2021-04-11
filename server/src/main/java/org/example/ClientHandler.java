@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.Random;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,7 +27,8 @@ public class ClientHandler implements Runnable {
                     out.println("Bye.");
                     break;
                 }
-                if (line.equalsIgnoreCase("READY")) {
+                else if (line.equalsIgnoreCase("READY")) {
+                    //String temp = generateTwoCards();
                     //Do something. Currently all of the code is in the client.
                     //Could seperate the dealer and the user
                     //Player says ready, dealer picks 2 cards, sends 2 strings to user
@@ -37,8 +39,17 @@ public class ClientHandler implements Runnable {
                     //User sends "STAND, int"
                     //Dealer tries to get higher than the int.
                 }
-                System.out.println("Recieved: " + line + " from client.");
-                out.println(line + " was recieved");
+                else if (line.equalsIgnoreCase("HIT")) {
+                    //do nothing
+                }
+                else if (line.equalsIgnoreCase("STAND")) {
+                    //Make a boolean true. So the blackjackserver can tell each user is done
+                    //And the dealer can start to hit based on the highest card value given to him.
+                }
+                else {
+                    System.out.println("Recieved: " + line + " from client.");
+                    out.println(line + " was recieved");
+                }
             }
             System.out.println("closed");
             in.close();
@@ -47,6 +58,25 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+    }
+    //isn't finished no clue how you guys generated the cards for the user
+    public String generateTwoCards() {
+        String cards = "";
+        //2 to A, 2,3,4,5,6,7,8,9,10,j,q,k,a hence 2 to 14
+        //Picking the value of the card
+        int max = 14;
+        int min = 2;
+
+        Random random = new Random();
+        int faceValue = random.nextInt(max - min + 1) + min;
+
+        int max1 = 4;
+        int min1 = 1;
+
+        Random random1 = new Random();
+        int suit = random1.nextInt(max1 - min1 + 1) + min1;
+
+        return cards;
     }
 
     public void stop() {
