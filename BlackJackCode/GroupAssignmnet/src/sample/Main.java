@@ -30,7 +30,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
-        FileInputStream blankFile = new FileInputStream("src/resources/PNG/blank.png");
+        String currentDirectory = System.getProperty("user.dir");
+        currentDirectory = currentDirectory + "/GroupAssignmnet/src/resources/PNG/blank.png";
+        System.out.println(currentDirectory);
+        FileInputStream blankFile = new FileInputStream(currentDirectory);
 
         //System.out.println("PATHHH "+getClass().getResource("sample.fxml"));
         //System.out.println("COULD BE "+"/out/production/GroupAssignmnet/sample/sample.fxml");

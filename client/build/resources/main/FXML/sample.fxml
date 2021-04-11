@@ -1,14 +1,53 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<GridPane fx:controller="org.example.Controller"
+          xmlns:fx="http://javafx.com/fxml" alignment="center" hgap="10" vgap="10" >
+    <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="org.example.Main"
-            prefHeight="400.0" prefWidth="600.0">
+    <Button
+            fx:id="hit" text="Hit" onAction="#hit"
+            GridPane.columnIndex="20" GridPane.rowIndex="20" prefWidth="194.0"/>
 
-</AnchorPane>
+    <Button
+            fx:id="stand" text="Stand" onAction="#stand"
+            GridPane.columnIndex="25" GridPane.rowIndex="20" prefWidth="194.0"/>
+
+    <Label text="D1"
+           GridPane.columnIndex="0" GridPane.rowIndex="0" prefWidth="194.0"/>
+    <Label text="D2"
+           GridPane.columnIndex="10" GridPane.rowIndex="0" prefWidth="194.0"/>
+    <Label text="D3"
+           GridPane.columnIndex="20" GridPane.rowIndex="0" prefWidth="194.0"/>
+
+    <Label text="P1"
+           GridPane.columnIndex="0" GridPane.rowIndex="15" prefWidth="194.0"/>
+    <Label text="P2"
+           GridPane.columnIndex="10" GridPane.rowIndex="15" prefWidth="194.0"/>
+    <Label text="P3"
+           GridPane.columnIndex="20" GridPane.rowIndex="15" prefWidth="194.0"/>
+
+    <Label fx:id="dealerTotalLabel" text="Dealer Total: 0"
+           GridPane.columnIndex="10" GridPane.rowIndex="20" prefWidth="250.0"/>
+
+    <Label fx:id="playerTotalLabel" text="Player Total: 0"
+           GridPane.columnIndex="15" GridPane.rowIndex="20" prefWidth="194.0"/>
+
+    <ImageView fx:id="dealerImg1"
+               GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+    <ImageView fx:id="dealerImg2"
+               GridPane.columnIndex="15" GridPane.rowIndex="0"/>
+    <ImageView fx:id="dealerImg3"
+               GridPane.columnIndex="25" GridPane.rowIndex="0"/>
+
+    <ImageView fx:id="playerImg1"
+               GridPane.columnIndex="5" GridPane.rowIndex="15"/>
+    <ImageView fx:id="playerImg2"
+               GridPane.columnIndex="15" GridPane.rowIndex="15"/>
+    <ImageView fx:id="playerImg3"
+               GridPane.columnIndex="25" GridPane.rowIndex="15"/>
+
+</GridPane>

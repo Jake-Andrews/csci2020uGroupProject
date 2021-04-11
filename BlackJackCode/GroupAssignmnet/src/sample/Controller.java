@@ -134,7 +134,9 @@ public class Controller {
         drawnCard = determineValue(cardValue) + determineSuit(cardValue);
         System.out.println(drawnCard);
         try {
-            blankImage = new Image(new FileInputStream("src/resources/PNG/" + drawnCard + ".png"));
+            String currentDirectory = System.getProperty("user.dir");
+            currentDirectory = currentDirectory + "/GroupAssignmnet/src/resources/PNG/";
+            blankImage = new Image(new FileInputStream(currentDirectory + drawnCard + ".png"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -196,7 +198,9 @@ public class Controller {
     public void initialize() throws FileNotFoundException {
 
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
-        blankFile = new FileInputStream("src/resources/PNG/blank.png");
+        String directory = System.getProperty("user.dir");
+        directory = directory + "/GroupAssignmnet/src/resources/PNG/blank.png";
+        blankFile = new FileInputStream(directory);
         blankImage = new Image(blankFile);
 
 
