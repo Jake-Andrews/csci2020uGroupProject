@@ -47,14 +47,6 @@ public class Controller {
     @FXML private Label playerTotalLabel;
     @FXML private Label dealerTotalLabel;
 
-    @FXML
-    public void sendToServer(ActionEvent event) {
-        //int to string
-        String temp = Integer.toString(test);
-        //Sends something to the server, and gets a string back.
-        System.out.println(connection.sendMessage(temp));
-    }
-
     //List<Label> playerLabels = new ArrayList<Label>();
     //blankImage = new Image(blankFile);
 
@@ -166,28 +158,92 @@ public class Controller {
         } else {
             playerTotalLabel.setText("Player Total: " + cardTotal);
         }
-
         if (hitCount == 2) {
             P1Hit.setDisable(true);
         }
-
         return cardTotal;
-
     }
 
+    public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal, boolean hidden) {
 
+        drawnCard = determineValue(cardValue) + determineSuit(cardValue);
+        System.out.println(drawnCard);
+        try {
+            String currentDirectory = System.getProperty("user.dir");
+            currentDirectory = currentDirectory + "/src/main/resources/PNG/";
+            if (hidden){
+                blankImage = new Image(new FileInputStream(currentDirectory + "back.png"));
+            } else {blankImage = new Image(new FileInputStream(currentDirectory + drawnCard + ".png"));}
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if (determineIfFaceCard(determineValue(cardValue)) == true) {
+            cardTotal += determineValueofFaceCards(determineValue(cardValue));
+        } else {
+            cardTotal += Integer.parseInt(determineValue(cardValue));
+        }
+
+        System.out.println(hitCount);
+        Graphics.get(hitCount).setImage(blankImage);
+
+        if (cardTotalLabel == DealerTotal) {
+            dealerTotalLabel.setText("Dealer Total: " + cardTotal);
+        } else {
+            playerTotalLabel.setText("Player Total: " + cardTotal);
+        }
+        if (hitCount == 2) {
+            P1Hit.setDisable(true);
+        }
+        return cardTotal;
+    }
+
+    @FXML
     public void hit(ActionEvent e) throws IOException {
         int playerCard = cardList.get(0);
         cardList.remove(0);
         playerCardTotal = drawCard(playerImages, PlayerTotal, PlayerHitCount, playerCard, playerCardTotal);
         PlayerHitCount += 1;
-        if (playerCardTotal >= 21) {
+        if (playerCardTotal > 21) {
             gameOver();
             //System.exit(0);
         }
     }
 
+    @FXML
+    public void ready(ActionEvent e) {
+        System.out.println(connection.sendMessage("READY"));
+        drawDealerCard(false);
+        drawDealerCard(true);
+    }
+    //int DealerDraw1Result = cardList.get(0);
+    //cardList.remove(0);
+
+    //dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDraw1Result, dealerCardTotal);
+    //DealerHitCount += 1;
+    public void drawDealerCard(boolean hidden) {
+        int DealerDrawResult = cardList.get(0);
+        cardList.remove(0);
+
+        dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
+        DealerHitCount += 1;
+
+        int DealerDraw2Result = cardList.get(0);
+        cardList.remove(0);
+    }
+
+    @FXML
     public void stand(ActionEvent e) throws IOException {
+        //Player decided to stand, need to tell the server.
+        //Server will recieve the users current score, ie:19 or 21...
+        //Dealer will then start to hit until it reaches this number, assuming the number is <=21.
+
+        //int to string
+        String temp = Integer.toString(playerCardTotal);
+        //Sends something to the server, and gets a string back.
+        System.out.println("Sending your score to the server.");
+        System.out.println(connection.sendMessage(temp));
+
         P1Stand.setDisable(true);
 
         int DealerDraw2Result = cardList.get(0);
@@ -221,7 +277,11 @@ public class Controller {
         } catch (NumberFormatException e) {
             System.err.println(e.getMessage());
         }
+        //
+        settingBlanks();
+    }
 
+    public void settingBlanks() throws FileNotFoundException {
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
         String directory = System.getProperty("user.dir");
         directory = directory + "/src/main/resources/PNG/blank.png";
@@ -247,8 +307,6 @@ public class Controller {
         playerImages.add(playerImg2);
         playerImages.add(playerImg3);
 
-
-
         for (int i = 0; i < upperbound; i++) {
             cardList.add(i);
         }
@@ -261,12 +319,5 @@ public class Controller {
             cardList.set(i, cardList.get(j));
             cardList.set(j, temp);
         }
-
-        int DealerDraw1Result = cardList.get(0);
-        cardList.remove(0);
-
-        dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDraw1Result, dealerCardTotal);
-        DealerHitCount += 1;
-
     }
 }

@@ -15,7 +15,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws IOException {
-
+        //BlackjackServer blackJack = new BlackjackServer();
         Parent root = FXMLLoader.load(getClass().getResource("/FXML/sample.fxml"));
         primaryStage.setTitle("Blackjack Server");
         primaryStage.setScene(new Scene(root, 300, 275));

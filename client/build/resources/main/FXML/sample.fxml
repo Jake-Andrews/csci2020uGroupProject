@@ -9,6 +9,10 @@
     <padding><Insets top="32" right="32" bottom="32" left="32"/></padding>
 
     <Button
+            fx:id="ready" text="READY" onAction="#ready"
+            GridPane.columnIndex="15" GridPane.rowIndex="20" prefWidth="194.0"/>
+
+    <Button
             fx:id="hit" text="Hit" onAction="#hit"
             GridPane.columnIndex="20" GridPane.rowIndex="20" prefWidth="194.0"/>
 
@@ -34,7 +38,7 @@
            GridPane.columnIndex="10" GridPane.rowIndex="20" prefWidth="250.0"/>
 
     <Label fx:id="playerTotalLabel" text="Player Total: 0"
-           GridPane.columnIndex="15" GridPane.rowIndex="20" prefWidth="194.0"/>
+           GridPane.columnIndex="5" GridPane.rowIndex="20" prefWidth="194.0"/>
 
     <ImageView fx:id="dealerImg1"
                GridPane.columnIndex="5" GridPane.rowIndex="0"/>
