@@ -2,6 +2,8 @@ org/example/Main.java
  org.example.Main
 org/example/Controller.java
  org.example.Controller
+org/example/DealerState.java
+ org.example.DealerState
 org/example/ClientHandler.java
  org.example.ClientHandler
 org/example/BlackjackServer.java

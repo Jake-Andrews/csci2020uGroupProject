@@ -8,6 +8,11 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 
 public class BlackjackServer {
+    private static ServerSocket serverSocket;
+    private static LinkedList<Thread> threads;
+    private static Hashtable<Long, ClientHandler> handlers;
+    private static Thread socketThread;
+
     public static void start() {
         //Boilerplate code was ripped from lab10 demo for handler and server. Changed as needed.
         System.out.println("Started server");
@@ -15,10 +20,10 @@ public class BlackjackServer {
         try {
             //creates the connection between the server and the client
             //This connection is put into ClientHandler
-            var serverSocket = new ServerSocket(port);
-            var threads = new LinkedList<Thread>();
-            var handlers = new Hashtable<Long, ClientHandler>();
-            var socketThread = new Thread(() -> {
+            serverSocket = new ServerSocket(port);
+            threads = new LinkedList<Thread>();
+            handlers = new Hashtable<Long, ClientHandler>();
+            socketThread = new Thread(() -> {
                 try {
                     while (true) {
                         var newSocket = serverSocket.accept();
@@ -34,40 +39,28 @@ public class BlackjackServer {
                 }
             });
             System.out.println("Now outside of the while loop");
-            //need to change this, reading from terminal
-            var in = new BufferedReader(new InputStreamReader(System.in));
-            //Read in from terminal, poorly done
 
-            //Should comment this out, change in to something else
-
-            String line;
             socketThread.start();
-            //Read input, if it is \\q. then quit
-            while ((line = in.readLine()) == null || !line.equalsIgnoreCase("\\q")) {
-
-            };
-
-            //Somehow continue until there is a single thread alive.
-            //THe way it's done above will never close since there is no input from terminal
-            //We want our game to exit, once each thread is killed.
-            //Also we need our server to do stuff. Such as, server reads from thread, once every thread
-            //Has said recieved "READY", then we can send dealer cards to each user.
-            //while (socketThread.isAlive()) {};
-
-
-            socketThread.interrupt();
-            //just removes the sockets, is fine
-            while (!threads.isEmpty()) {
-                var t = threads.remove();
-                handlers.get(t.getId()).stop();
-                t.interrupt();
-            }
-            System.out.println("Closing the server.");
-            //Close our serverSocket and input stream
-            serverSocket.close();
-            in.close();
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
+    }
+
+    public void stand() {
+        //Go through linkedList of threads
+        //
+    }
+
+    public void serverStop() throws IOException {
+        System.out.println("Closing the server.");
+        socketThread.interrupt();
+        //just removes the sockets, is fine
+        while (!threads.isEmpty()) {
+            var t = threads.remove();
+            handlers.get(t.getId()).stop();
+            t.interrupt();
+        }
+        //Close our serverSocket and input stream
+        serverSocket.close();
     }
 }

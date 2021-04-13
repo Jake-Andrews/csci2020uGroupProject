@@ -10,6 +10,7 @@ import java.net.Socket;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
+    private DealerState dealerState;
 
     public ClientHandler(Socket socket) {
         this.socket = socket;
@@ -23,28 +24,66 @@ public class ClientHandler implements Runnable {
 
             String line;
             while (!socket.isClosed() && (line = in.readLine()) != null) {
+                String parts[] = line.split(",");
+
                 if (line.equals("\\q")) {
                     out.println("Bye.");
                     break;
                 }
                 else if (line.equalsIgnoreCase("READY")) {
-                    //String temp = generateTwoCards();
-                    //Do something. Currently all of the code is in the client.
-                    //Could seperate the dealer and the user
-                    //Player says ready, dealer picks 2 cards, sends 2 strings to user
-                    //Add those strings to the client and remove those cards from the deck
-                    //Then each time user presses hit they send "HIT" to the dealer
-                    //Dealer sends them a card.
-                    //Dealer substracts this card from his list of avaliable cards
-                    //User sends "STAND, int"
-                    //Dealer tries to get higher than the int.
+                    //Create the dealers deck of cards
+                    dealerState = new DealerState();
+                    dealerState.ready();
+                    dealerState.initializeDeck();
+                    long randomNumberSeed = dealerState.getRandomNumberSeed();
+                    //sends the client the randomNumber
+                    //Both clients will get the same number, since initializeDeck only runs for the first client
+                    //And randomnumberseed is static
+                    System.out.println(String.valueOf(randomNumberSeed));
+                    out.println(String.valueOf(randomNumberSeed));
+
+                    //Bad way of removing the two cards the dealer picks at the start
+                    //If there are two players it works
+                    //Should have the server recognize when each player is ready.
+                    //Then the server sends a message to each player and also picks 2 cards for the dealer and subtracts from the deck
+                    //If this was implemented could also make it so players can see if their opponenet has not pressed ready
+                    //Could lock them out from hitting hit before enemy player is ready.
+                    int temp = DealerState.removeCard();
                 }
                 else if (line.equalsIgnoreCase("HIT")) {
-                    //do nothing
+                    //Remove a card from the deck and give it to the player.
+                    int a = DealerState.removeCard();
+                    String b = String.valueOf(a);
+                    out.println(b);
                 }
-                else if (line.equalsIgnoreCase("STAND")) {
-                    //Make a boolean true. So the blackjackserver can tell each user is done
-                    //And the dealer can start to hit based on the highest card value given to him.
+                //Used to make sure both players have hit stand before the game ends
+                else if (line.equalsIgnoreCase("END")) {
+                    if (DealerState.end == 2) {
+                        out.println("YES");
+                    } else {out.println("NO");}
+                }
+                else if (parts.length == 2) {
+                    //Once both players have stood, should somehow send a message to both clients, with the dealers chosen cards
+                    //And the dealers value, so the player can put the cards on the board and tell if they won.
+                    if (parts[0].equalsIgnoreCase("STAND")) {
+                        DealerState.setEnd();
+
+                        //Grab the users score
+                        System.out.println(parts[1]);
+
+                        //If it's > current users highscore, replace
+                        int userScore = Integer.getInteger(parts[1]);
+                        if (userScore > DealerState.highestUserScore) {
+                            DealerState.setHighestUserScore(userScore);
+                        }
+
+                        if (DealerState.end == 1) {
+        
+                        }
+
+                        out.println("OK");
+                    } else {out.println("Unsure");}
+                    //For now, just get a random score
                 }
                 else {
                     System.out.println("Recieved: " + line + " from client.");
@@ -58,25 +97,6 @@ public class ClientHandler implements Runnable {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
-    }
-    //isn't finished no clue how you guys generated the cards for the user
-    public String generateTwoCards() {
-        String cards = "";
-        //2 to A, 2,3,4,5,6,7,8,9,10,j,q,k,a hence 2 to 14
-        //Picking the value of the card
-        int max = 14;
-        int min = 2;
-
-        Random random = new Random();
-        int faceValue = random.nextInt(max - min + 1) + min;
-
-        int max1 = 4;
-        int min1 = 1;
-
-        Random random1 = new Random();
-        int suit = random1.nextInt(max1 - min1 + 1) + min1;
-
-        return cards;
     }
 
     public void stop() {

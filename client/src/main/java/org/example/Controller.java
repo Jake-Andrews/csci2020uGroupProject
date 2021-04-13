@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
+import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -20,20 +21,23 @@ public class Controller {
     int upperbound = 51;
     int playerCardTotal;
     int dealerCardTotal;
-    Image blankImage;
     int test = 0;
+    int Bust = 21;
+    private int count = 0;
+
     private BlackjackClient connection;
     Random DRAW = new Random(); //instance of random class
-    int Bust = 21;
     String drawnCard = "";
     List<Integer> cardList = new ArrayList<>();
 
+    Image blankImage;
 
     //Should declare in fxml
-    Label DealerTotal = new Label("Total: 0");
-    Label PlayerTotal = new Label("Total: 0");
-    Button P1Hit = new Button();
-    Button P1Stand = new Button();
+    @FXML Label waiting;
+    @FXML Label DealerTotal;
+    @FXML Label PlayerTotal;
+    @FXML Button P1Hit;
+    @FXML Button P1Stand;
 
 
     FileInputStream blankFile;
@@ -59,11 +63,46 @@ public class Controller {
 
     //Feel like most of this should be into a different class.
     //Bloats the controller
+
+    //Testing some code to periodicly check if both clients have pressed stand/ready
+    public  javax.swing.Timer refresherTimer = null;
+    public void stopRefreshing() {
+        if (refresherTimer != null) {
+            refresherTimer.stop();
+            refresherTimer = null;
+        }
+    }
+    protected void startRefreshing() {
+        stopRefreshing();
+        refresherTimer = new Timer(1000, e -> {
+            //newItem.getPrice()
+            if (count % 2 == 0) {
+                waiting.setText("Waiting on P2..");
+            } else {waiting.setText("Waiting on P2...");}
+            String message = connection.sendMessage("END");
+            System.out.println(message);
+            if (message == "TRUE") {
+                stopRefreshing();
+            }
+        });
+        refresherTimer.start();
+    }
+    /*
+    public void onStartButtonClicked() {
+        Item newItem = new Item(newItemField.getText());
+        // here newItem should be added to a list of items which should be in the ItemGUI class
+        startRefreshing();
+    }
+
+    public void onStopButtonClicked() {
+        stopRefreshing();
+    }
+    */
     public boolean determineIfFaceCard(String Letter) {
         if (Letter == "A" || Letter == "J" || Letter == "Q" || Letter == "K") {
             return true;
 
-        } else return false;
+        } else {return false;}
     }
 
     public String determineSuit(int cardValue) {
@@ -117,9 +156,9 @@ public class Controller {
             System.out.println("error in face value determiniign");
             return 0;
         }
-
     }
 
+    /*
     public void gameOver() throws IOException {
         if (playerCardTotal > Bust) {
             System.out.println("player busted");
@@ -136,7 +175,7 @@ public class Controller {
         }
         //  System.exit(0);
     }
-
+    */
     public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal) {
 
         drawnCard = determineValue(cardValue) + determineSuit(cardValue);
@@ -167,7 +206,6 @@ public class Controller {
         if (hitCount == 2) {
             P1Hit.setDisable(true);
         }
-
         return cardTotal;
     }
 
@@ -208,27 +246,47 @@ public class Controller {
 
     @FXML
     public void hit(ActionEvent e) throws IOException {
-        int playerCard = cardList.get(0);
-        cardList.remove(0);
+        //Grab a card from the dealers deck
+        String card = connection.sendMessage("HIT");
+        //Parse it to an int
+        int playerCard = 0;
+        try {
+            Integer.parseInt(card);
+        } catch (NumberFormatException error) {
+            System.out.println("Non-number, error: " + error);
+        }
+
+        //int playerCard = cardList.get(0);
+        //cardList.remove(0);
         playerCardTotal = drawCard(playerImages, PlayerTotal, PlayerHitCount, playerCard, playerCardTotal);
         PlayerHitCount += 1;
         if (playerCardTotal > 21) {
-            gameOver();
+            //gameOver();
+            System.out.println("You lose!");
             //System.exit(0);
         }
     }
 
     @FXML
     public void ready(ActionEvent e) {
-        System.out.println(connection.sendMessage("READY"));
+        //temp contains the randomnumberseed
+        String temp = connection.sendMessage("READY");
+        //turning it into a long
+        long randomNumberSeed = 0;
+        try {
+            randomNumberSeed = Long.parseLong(temp);
+        } catch (NumberFormatException error) {
+            System.out.println("Seed was not a number, error: " + error.getMessage());
+        }
+        DRAW.setSeed(randomNumberSeed);
+        shuffleDeck();
+
+        //About to draw two cards for the dealer.
+        //
         drawDealerCard(false);
         drawDealerCard(true);
     }
-    //int DealerDraw1Result = cardList.get(0);
-    //cardList.remove(0);
 
-    //dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDraw1Result, dealerCardTotal);
-    //DealerHitCount += 1;
     public void drawDealerCard(boolean hidden) {
         int DealerDrawResult = cardList.get(0);
         cardList.remove(0);
@@ -252,21 +310,9 @@ public class Controller {
         System.out.println("Sending your score to the server.");
         System.out.println(connection.sendMessage("STAND," + temp));
 
-        P1Stand.setDisable(true);
+        //P1Stand.setDisable(true);
 
-        int DealerDraw2Result = cardList.get(0);
-        cardList.remove(0);
-
-        dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDraw2Result, dealerCardTotal);
-        DealerHitCount += 1;
-
-
-        int DealerDraw3Result = cardList.get(0);
-        cardList.remove(0);
-
-        dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDraw3Result, dealerCardTotal);
-        // DealerHitCount =0;
-        gameOver();
+        startRefreshing();
     }
 
     @FXML
@@ -285,8 +331,25 @@ public class Controller {
         } catch (NumberFormatException e) {
             System.err.println(e.getMessage());
         }
-        //
+        //Sets blank pictures for the game
         settingBlanks();
+    }
+
+    public void shuffleDeck() {
+        //DRAW is the random generator
+        //Uses the same seed as server. So the decks are the same
+        for (int i = 0; i < upperbound; i++) {
+            cardList.add(i);
+        }
+
+        for (int i = upperbound - 1; i > 0; i--) {
+
+            int j = DRAW.nextInt(i + 1);
+
+            int temp = cardList.get(i);
+            cardList.set(i, cardList.get(j));
+            cardList.set(j, temp);
+        }
     }
 
     public void settingBlanks() throws FileNotFoundException {
@@ -314,18 +377,5 @@ public class Controller {
         playerImages.add(playerImg1);
         playerImages.add(playerImg2);
         playerImages.add(playerImg3);
-
-        for (int i = 0; i < upperbound; i++) {
-            cardList.add(i);
-        }
-
-        for (int i = upperbound - 1; i > 0; i--) {
-
-            int j = DRAW.nextInt(i + 1);
-
-            int temp = cardList.get(i);
-            cardList.set(i, cardList.get(j));
-            cardList.set(j, temp);
-        }
     }
 }
