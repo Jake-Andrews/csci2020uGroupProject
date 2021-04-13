@@ -78,7 +78,7 @@ public class ClientHandler implements Runnable {
                         }
 
                         if (DealerState.end == 1) {
-        
+
                         }
 
                         out.println("OK");
