@@ -248,10 +248,11 @@ public class Controller {
     public void hit(ActionEvent e) throws IOException {
         //Grab a card from the dealers deck
         String card = connection.sendMessage("HIT");
+        System.out.println("Dealer gave you a: " + card);
         //Parse it to an int
         int playerCard = 0;
         try {
-            Integer.parseInt(card);
+            playerCard = Integer.parseInt(card);
         } catch (NumberFormatException error) {
             System.out.println("Non-number, error: " + error);
         }
@@ -299,7 +300,7 @@ public class Controller {
     }
 
     @FXML
-    public void stand(ActionEvent e) throws IOException {
+    public void stand(ActionEvent e) {
         //Player decided to stand, need to tell the server.
         //Server will recieve the users current score, ie:19 or 21...
         //Dealer will then start to hit until it reaches this number, assuming the number is <=21.
@@ -307,12 +308,32 @@ public class Controller {
         //int to string
         String temp = Integer.toString(playerCardTotal);
         //Sends something to the server, and gets a string back.
+        //String contains the
         System.out.println("Sending your score to the server.");
-        System.out.println(connection.sendMessage("STAND," + temp));
 
-        //P1Stand.setDisable(true);
+        String message = "";
+        message = connection.sendMessage("STAND," + temp);
+        System.out.println(message);
 
-        startRefreshing();
+        /*
+        String parts[] = message.split(",");
+
+        P1Stand.setDisable(true);
+
+        //If false, other player has not pressed stand
+        if (parts[0] == "false") {
+            startRefreshing();
+        } else {
+            //System.out.println(parts[1]);
+            //int DealerDrawResult = cardList.get(0);
+            //cardList.remove(0);
+            //for (int i = 0; i < parts.length; i++) {
+            //    System.out.println("Dealers cards " + parts[i]);
+            //}
+            //dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
+            //DealerHitCount += 1;
+        }
+        */
     }
 
     @FXML

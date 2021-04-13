@@ -16,14 +16,12 @@ import java.util.Random;
 
 public class DealerState {
 
-    private int DealerHitCount = 0;
     private int upperbound = 51;
     private static int dealerCardTotal = 0;
-    private int test = 0;
-    private int Bust = 21;
     private static int ready = 0;
     public static int highestUserScore = 0;
     public static int end = 0;
+    public static int dealersScore = 0;
 
     private String drawnCard = "";
     private static List<Integer> cardList = new ArrayList<Integer>();
@@ -33,12 +31,58 @@ public class DealerState {
 
     public DealerState() {}
 
-    public static int getScore() {
-        while (dealerCardTotal < highestUserScore && dealerCardTotal != 21) {
-            // = cardList.get(0);
-        }
-        return 0;
+    public static String getState() {
+        if (end == 1) {
+            return "false";
+        } else {return "true";}
     }
+
+    public static String getCards() {
+        String listOfCards = "";
+        System.out.println("Before loop, value: " + dealerCardTotal);
+        while (dealerCardTotal < highestUserScore && dealerCardTotal <= 21) {
+            // = cardList.get(0);
+            //Grab a card from the deck and remove it.
+            //Cards numbered 0-51
+            int card = cardList.get(0);
+            System.out.println("In Loop: " + card);
+            listOfCards = listOfCards + card + ",";
+            cardList.remove(0);
+
+            //Grab it's "value". 2,3,4,10,etc...
+            //Automatically increases dealerCardTotal
+            int cardValue = getCardValue(card);
+            System.out.println("In loop value: " + cardValue);
+        }
+
+        System.out.println("Dealers list: " + listOfCards);
+        System.out.println("Dealers score: " + dealerCardTotal + " Users highscore: " + highestUserScore);
+
+        //If the dealer did not have to hit at all, notify user
+        if (listOfCards == "") {
+            return "STAND," + dealerCardTotal;
+        //otherwise, the dealer hit.
+        } else {return "HIT," + listOfCards + dealerCardTotal;}
+    }
+
+    public static int getCardValue(int cardValue) {
+
+        String drawnCard = determineValue(cardValue) + determineSuit(cardValue);
+        //System.out.println(drawnCard);
+        int value = 0;
+
+        if (determineIfFaceCard(determineValue(cardValue)) == true) {
+            value = determineValueofFaceCards(determineValue(cardValue));
+            dealerCardTotal += value;
+        } else {
+            value = Integer.parseInt(determineValue(cardValue));
+            dealerCardTotal += value;
+        }
+
+        return value;
+    }
+
+
 
     public static void setEnd() {
         end++;
@@ -53,6 +97,17 @@ public class DealerState {
 
     public static int removeCard() {
         int card = cardList.get(0);
+        int value = getCardValue(card);
+        System.out.println("Adding value to dealer: " + value);
+
+        dealerCardTotal += value;
+        cardList.remove(0);
+
+        return card;
+    }
+
+    public static int removeCardForPlayer() {
+        int card = cardList.get(0);
         cardList.remove(0);
 
         return card;
@@ -61,13 +116,13 @@ public class DealerState {
     public static void setPlayerScores(Integer score) {
         playerScores.add(score);
     }
-    public boolean determineIfFaceCard(String Letter) {
+    public static boolean determineIfFaceCard(String Letter) {
         if (Letter == "A" || Letter == "J" || Letter == "Q" || Letter == "K") {
             return true;
         } else {return false;}
     }
 
-    public String determineSuit(int cardValue) {
+    public static String determineSuit(int cardValue) {
         if (cardValue % 4 == 0) {
             return "C";
         } else if (cardValue % 4 == 1) {
@@ -79,7 +134,7 @@ public class DealerState {
         } else return "no card found #math error";
     }
 
-    public String determineValue(int cardValue) {
+    public static String determineValue(int cardValue) {
         if (cardValue % 13 == 0) {
             return "2";
         } else if (cardValue % 13 == 1) {
@@ -109,7 +164,7 @@ public class DealerState {
         } else return "no card found #math error";
     }
 
-    public int determineValueofFaceCards(String Symbol) {
+    public static int determineValueofFaceCards(String Symbol) {
         if (Symbol == "A") {
             return 1;
         } else if (Symbol == "J" || Symbol == "Q" || Symbol == "K") {
@@ -120,72 +175,7 @@ public class DealerState {
         }
 
     }
-    /*
-    public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal) {
-        //gets the current drawn card and determines its value and suit.
-        //Ie: 2H
-        drawnCard = determineValue(cardValue) + determineSuit(cardValue);
-        System.out.println(drawnCard);
 
-        //Grab the cards
-        if (determineIfFaceCard(determineValue(cardValue)) == true) {
-            cardTotal += determineValueofFaceCards(determineValue(cardValue));
-        } else {
-            cardTotal += Integer.parseInt(determineValue(cardValue));
-        }
-
-        System.out.println(hitCount);
-        Graphics.get(hitCount).setImage(blankImage);
-
-        if (cardTotalLabel == DealerTotal) {
-            dealerTotalLabel.setText("Dealer Total: " + cardTotal);
-        } else {
-            playerTotalLabel.setText("Player Total: " + cardTotal);
-        }
-        //doesnt do anything, doesn't refrence the button declare in fxml file
-        if (hitCount == 2) {
-            P1Hit.setDisable(true);
-        }
-        return cardTotal;
-    }
-    */
-
-    public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal, boolean hidden) {
-
-        drawnCard = determineValue(cardValue) + determineSuit(cardValue);
-        System.out.println(drawnCard);
-
-        if (determineIfFaceCard(determineValue(cardValue)) == true) {
-            cardTotal += determineValueofFaceCards(determineValue(cardValue));
-        } else {
-            cardTotal += Integer.parseInt(determineValue(cardValue));
-        }
-
-        return cardTotal;
-    }
-    /*
-    public void hit() throws IOException {
-        int playerCard = cardList.get(0);
-        cardList.remove(0);
-        playerCardTotal = drawCard(playerImages, PlayerTotal, PlayerHitCount, playerCard, playerCardTotal);
-        PlayerHitCount += 1;
-        if (playerCardTotal > 21) {
-            gameOver();
-            //System.exit(0);
-        }
-    }
-
-    public void drawDealerCard(boolean hidden) {
-        int DealerDrawResult = cardList.get(0);
-        cardList.remove(0);
-
-        dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
-        DealerHitCount += 1;
-
-        int DealerDraw2Result = cardList.get(0);
-        cardList.remove(0);
-    }
-    */
     public void ready() {
         this.ready++;
     }

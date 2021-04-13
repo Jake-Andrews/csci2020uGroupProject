@@ -16,6 +16,7 @@ public class ClientHandler implements Runnable {
         this.socket = socket;
     }
 
+    //Handles each client and their messages
     @Override
     public void run() {
         try {
@@ -24,9 +25,10 @@ public class ClientHandler implements Runnable {
 
             String line;
             while (!socket.isClosed() && (line = in.readLine()) != null) {
+                //Used to grab numbers sometimes with the messages. Ie: STAND,4
                 String parts[] = line.split(",");
 
-                if (line.equals("\\q")) {
+                if (line.equals("QUIT")) {
                     out.println("Bye.");
                     break;
                 }
@@ -39,7 +41,7 @@ public class ClientHandler implements Runnable {
                     //sends the client the randomNumber
                     //Both clients will get the same number, since initializeDeck only runs for the first client
                     //And randomnumberseed is static
-                    System.out.println(String.valueOf(randomNumberSeed));
+                    //System.out.println(String.valueOf(randomNumberSeed));
                     out.println(String.valueOf(randomNumberSeed));
 
                     //Bad way of removing the two cards the dealer picks at the start
@@ -48,17 +50,18 @@ public class ClientHandler implements Runnable {
                     //Then the server sends a message to each player and also picks 2 cards for the dealer and subtracts from the deck
                     //If this was implemented could also make it so players can see if their opponenet has not pressed ready
                     //Could lock them out from hitting hit before enemy player is ready.
-                    int temp = DealerState.removeCard();
+                    DealerState.removeCard();
                 }
                 else if (line.equalsIgnoreCase("HIT")) {
                     //Remove a card from the deck and give it to the player.
-                    int a = DealerState.removeCard();
+                    int a = DealerState.removeCardForPlayer();
                     String b = String.valueOf(a);
                     out.println(b);
                 }
                 //Used to make sure both players have hit stand before the game ends
                 else if (line.equalsIgnoreCase("END")) {
                     if (DealerState.end == 2) {
+
                         out.println("YES");
                     } else {out.println("NO");}
                 }
@@ -69,20 +72,26 @@ public class ClientHandler implements Runnable {
                         DealerState.setEnd();
 
                         //Grab the users score
-                        System.out.println(parts[1]);
+                        System.out.println("Users score: " + parts[1]);
 
                         //If it's > current users highscore, replace
-                        int userScore = Integer.getInteger(parts[1]);
+                        int userScore = Integer.parseInt(parts[1]);
                         if (userScore > DealerState.highestUserScore) {
                             DealerState.setHighestUserScore(userScore);
                         }
 
-                        if (DealerState.end == 1) {
+                        String message = "";
 
+                        if (DealerState.end == 1) {
+                            out.println(DealerState.getState());
+                            System.out.println(DealerState.getState());
+                        } else {
+                            message = DealerState.getState() + "," + DealerState.getCards();
+                            System.out.println("Message to user: " + message);
+                            out.println(message);
                         }
 
-                        out.println("OK");
-                    } else {out.println("Unsure");}
+                    }
                     //For now, just get a random score
                 }
                 else {
