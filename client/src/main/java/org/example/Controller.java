@@ -116,6 +116,7 @@ public class Controller {
     }
 
     public void gameOver() throws IOException {
+        System.out.println("GAME OVER");
         if (playerCardTotal > Bust) {
             System.out.println("player busted");
             Main.dealerWinScreen();
@@ -151,6 +152,11 @@ public class Controller {
         }
 
         System.out.println(hitCount);
+        //if player gets to 3 cards hitcount==3 will cause an error
+        //this if statement is to avoid that
+        if(hitCount==3){
+            hitCount-=1;
+        }
         Graphics.get(hitCount).setImage(blankImage);
 
         if (cardTotalLabel == DealerTotal) {
