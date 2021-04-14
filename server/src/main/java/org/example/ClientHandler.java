@@ -83,7 +83,7 @@ public class ClientHandler implements Runnable {
                         String message = "";
 
                         if (DealerState.end == 1) {
-                            out.println(DealerState.getState());
+                            out.println(DealerState.getState() + ",FillerForSplit");
                             System.out.println(DealerState.getState());
                         } else {
                             message = DealerState.getState() + "," + DealerState.getCards();

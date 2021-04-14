@@ -38,6 +38,7 @@ public class BlackjackClient {
         try {
             System.out.println("Read from server:");
             res = in.readLine();
+            System.out.println(res);
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

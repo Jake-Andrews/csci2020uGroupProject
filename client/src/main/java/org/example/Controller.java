@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -24,6 +25,7 @@ public class Controller {
     int test = 0;
     int Bust = 21;
     private int count = 0;
+    private int hiddenCard = 0;
 
     private BlackjackClient connection;
     Random DRAW = new Random(); //instance of random class
@@ -158,12 +160,12 @@ public class Controller {
         }
     }
 
-    /*
+
     public void gameOver() throws IOException {
-        if (playerCardTotal > Bust) {
+        if (playerCardTotal > 21) {
             System.out.println("player busted");
             Main.dealerWinScreen();
-        } else if (dealerCardTotal > Bust) {
+        } else if (dealerCardTotal > 21) {
             System.out.println("dealer busted");
             Main.playerWinScreen();
         } else if (dealerCardTotal >= playerCardTotal) {
@@ -175,7 +177,7 @@ public class Controller {
         }
         //  System.exit(0);
     }
-    */
+
     public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal) {
 
         drawnCard = determineValue(cardValue) + determineSuit(cardValue);
@@ -217,6 +219,7 @@ public class Controller {
             String currentDirectory = System.getProperty("user.dir");
             currentDirectory = currentDirectory + "/src/main/resources/PNG/";
             if (hidden){
+                hiddenCard = cardValue;
                 blankImage = new Image(new FileInputStream(currentDirectory + "back.png"));
             } else {blankImage = new Image(new FileInputStream(currentDirectory + drawnCard + ".png"));}
         } catch (FileNotFoundException e) {
@@ -248,7 +251,7 @@ public class Controller {
     public void hit(ActionEvent e) throws IOException {
         //Grab a card from the dealers deck
         String card = connection.sendMessage("HIT");
-        System.out.println("Dealer gave you a: " + card);
+        System.out.println("Card from dealer: " + card);
         //Parse it to an int
         int playerCard = 0;
         try {
@@ -285,7 +288,7 @@ public class Controller {
         //About to draw two cards for the dealer.
         //
         drawDealerCard(false);
-        drawDealerCard(true);
+        drawDealerCard(false);
     }
 
     public void drawDealerCard(boolean hidden) {
@@ -293,14 +296,14 @@ public class Controller {
         cardList.remove(0);
 
         dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
-        DealerHitCount += 1;
+        DealerHitCount ++;
 
-        int DealerDraw2Result = cardList.get(0);
-        cardList.remove(0);
+        //int DealerDraw2Result = cardList.get(0);
+        //cardList.remove(0);
     }
 
     @FXML
-    public void stand(ActionEvent e) {
+    public void stand(ActionEvent e) throws IOException {
         //Player decided to stand, need to tell the server.
         //Server will recieve the users current score, ie:19 or 21...
         //Dealer will then start to hit until it reaches this number, assuming the number is <=21.
@@ -315,25 +318,43 @@ public class Controller {
         message = connection.sendMessage("STAND," + temp);
         System.out.println(message);
 
-        /*
-        String parts[] = message.split(",");
+        ArrayList<String> parts = new ArrayList<>(Arrays.asList(message.split(",")));
 
-        P1Stand.setDisable(true);
+        //P1Stand.setDisable(true);
 
         //If false, other player has not pressed stand
-        if (parts[0] == "false") {
-            startRefreshing();
-        } else {
-            //System.out.println(parts[1]);
-            //int DealerDrawResult = cardList.get(0);
-            //cardList.remove(0);
-            //for (int i = 0; i < parts.length; i++) {
-            //    System.out.println("Dealers cards " + parts[i]);
-            //}
-            //dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
-            //DealerHitCount += 1;
+        //false
+        if (parts.get(0).equals("false")) {
+            //startRefreshing();
         }
-        */
+        //true,STAND,10
+        //or true,STAND,10,34
+        //10 - dealercardtotal, 34 carddealerprevious hit with
+        else if (parts.get(1).equalsIgnoreCase("STAND")) {
+            if (parts.size() == 3) {
+                dealerCardTotal = Integer.parseInt(parts.get(2));
+                gameOver();
+            } else {
+                int DealerDrawResult = Integer.parseInt(parts.get(3));
+
+                dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal);
+                //DealerHitCount++;
+                dealerCardTotal = Integer.parseInt(parts.get(2));
+                gameOver();
+            }
+        }
+        //HIT,cardvalues...to display,dealerTotal
+        //true,HIT,0,9
+        else if (parts.get(1).equals("HIT")) {
+            //int length = parts.length;
+            dealerCardTotal = Integer.parseInt(parts.get(3));
+            int DealerDrawResult = Integer.parseInt(parts.get(2));
+
+            dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal);
+            //DealerHitCount++;
+
+            gameOver();
+        }
     }
 
     @FXML
@@ -393,7 +414,7 @@ public class Controller {
         dealerImages.add(dealerImg2);
         dealerImages.add(dealerImg3);
 
-        System.out.println(dealerImages.get(0));
+        //System.out.println(dealerImages.get(0));
 
         playerImages.add(playerImg1);
         playerImages.add(playerImg2);

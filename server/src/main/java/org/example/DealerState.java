@@ -22,6 +22,8 @@ public class DealerState {
     public static int highestUserScore = 0;
     public static int end = 0;
     public static int dealersScore = 0;
+    private static int counter = 0;
+    private static int dealerCard = 0;
 
     private String drawnCard = "";
     private static List<Integer> cardList = new ArrayList<Integer>();
@@ -40,29 +42,37 @@ public class DealerState {
     public static String getCards() {
         String listOfCards = "";
         System.out.println("Before loop, value: " + dealerCardTotal);
-        while (dealerCardTotal < highestUserScore && dealerCardTotal <= 21) {
+
+        while (dealerCardTotal < highestUserScore && dealerCardTotal <= 21 && counter < 1) {
             // = cardList.get(0);
             //Grab a card from the deck and remove it.
             //Cards numbered 0-51
             int card = cardList.get(0);
+            dealerCard = card;
             System.out.println("In Loop: " + card);
             listOfCards = listOfCards + card + ",";
             cardList.remove(0);
 
             //Grab it's "value". 2,3,4,10,etc...
-            //Automatically increases dealerCardTotal
             int cardValue = getCardValue(card);
+            dealerCardTotal += cardValue;
             System.out.println("In loop value: " + cardValue);
+
+            counter++;
         }
 
         System.out.println("Dealers list: " + listOfCards);
         System.out.println("Dealers score: " + dealerCardTotal + " Users highscore: " + highestUserScore);
 
         //If the dealer did not have to hit at all, notify user
-        if (listOfCards == "") {
+        if (listOfCards == "" && counter == 0) {
             return "STAND," + dealerCardTotal;
         //otherwise, the dealer hit.
-        } else {return "HIT," + listOfCards + dealerCardTotal;}
+        }
+        else if(listOfCards == "" && counter >0) {
+            return "STAND," + dealerCardTotal + "," + dealerCard;
+        }
+        else {return "HIT," + listOfCards + dealerCardTotal;}
     }
 
     public static int getCardValue(int cardValue) {
@@ -73,16 +83,12 @@ public class DealerState {
 
         if (determineIfFaceCard(determineValue(cardValue)) == true) {
             value = determineValueofFaceCards(determineValue(cardValue));
-            dealerCardTotal += value;
         } else {
             value = Integer.parseInt(determineValue(cardValue));
-            dealerCardTotal += value;
         }
 
         return value;
     }
-
-
 
     public static void setEnd() {
         end++;
@@ -90,9 +96,6 @@ public class DealerState {
 
     public static void setHighestUserScore(int num) {
         highestUserScore = num;
-    }
-    public static boolean checkScores() {
-        return playerScores.size() == 2;
     }
 
     public static int removeCard() {
