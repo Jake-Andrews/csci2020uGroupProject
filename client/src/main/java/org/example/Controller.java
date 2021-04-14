@@ -53,8 +53,6 @@ public class Controller {
     @FXML private ImageView playerImg2;
     @FXML private ImageView playerImg3;
 
-    @FXML private Label playerTotalLabel;
-    @FXML private Label dealerTotalLabel;
 
     //List<Label> playerLabels = new ArrayList<Label>();
     //blankImage = new Image(blankFile);
@@ -169,10 +167,9 @@ public class Controller {
         //  System.exit(0);
     }
 
-    public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal) {
+    public int drawCard(List<ImageView> Graphics, int hitCount, int cardValue, int cardTotal) {
         /**This method builds the default gameboard the user will see.
          * @param Graphics          The images of the cards to display
-         * @param cardTotalLabel    Label to display card total
          * @param hitCount          Number of times the player has hit
          * @param cardValue         The value of the card
          * @param cardTotal         The sum of the dealt cards
@@ -196,19 +193,12 @@ public class Controller {
         System.out.println(hitCount);
         Graphics.get(hitCount).setImage(blankImage);
 
-        if (cardTotalLabel == DealerTotal) {
-            dealerTotalLabel.setText("Dealer Total: " + cardTotal);
-        } else {
-            playerTotalLabel.setText("Player Total: " + cardTotal);
-        }
-
         return cardTotal;
     }
 
-    public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal, boolean hidden) {
+    public int drawCard(List<ImageView> Graphics, int hitCount, int cardValue, int cardTotal, boolean hidden) {
         /**This method draws the cards the user will see to the screen.
          * @param Graphics          The images of the cards to display
-         * @param cardTotalLabel    Label to display card total
          * @param hitCount          Number of times the player has hit
          * @param cardValue         The value of the card
          * @param cardTotal         The sum of the dealt cards
@@ -236,12 +226,6 @@ public class Controller {
         System.out.println(hitCount);
         Graphics.get(hitCount).setImage(blankImage);
 
-        if (cardTotalLabel == DealerTotal) {
-            dealerTotalLabel.setText("Dealer Total: " + cardTotal);
-        } else {
-            playerTotalLabel.setText("Player Total: " + cardTotal);
-        }
-
         return cardTotal;
     }
 
@@ -263,7 +247,7 @@ public class Controller {
 
         //int playerCard = cardList.get(0);
         //cardList.remove(0);
-        playerCardTotal = drawCard(playerImages, PlayerTotal, PlayerHitCount, playerCard, playerCardTotal);
+        playerCardTotal = drawCard(playerImages, PlayerHitCount, playerCard, playerCardTotal);
         PlayerHitCount += 1;
         if (playerCardTotal > 21) { //if bust, games over
             try {
@@ -310,7 +294,7 @@ public class Controller {
         int DealerDrawResult = cardList.get(0);
         cardList.remove(0);
 
-        dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
+        dealerCardTotal = drawCard(dealerImages, DealerHitCount, DealerDrawResult, dealerCardTotal, hidden);
         DealerHitCount ++;
 
         //int DealerDraw2Result = cardList.get(0);
@@ -356,7 +340,7 @@ public class Controller {
             } else {
                 int DealerDrawResult = Integer.parseInt(parts.get(3));
                 //Update dealer values
-                dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal);
+                dealerCardTotal = drawCard(dealerImages, DealerHitCount, DealerDrawResult, dealerCardTotal);
                 //DealerHitCount++;
                 dealerCardTotal = Integer.parseInt(parts.get(2));
                 gameOver();
@@ -369,7 +353,7 @@ public class Controller {
             dealerCardTotal = Integer.parseInt(parts.get(3));
             int DealerDrawResult = Integer.parseInt(parts.get(2));
 
-            dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal);
+            dealerCardTotal = drawCard(dealerImages, DealerHitCount, DealerDrawResult, dealerCardTotal);
             //DealerHitCount++;
 
             gameOver();

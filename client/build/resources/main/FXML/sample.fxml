@@ -34,12 +34,6 @@
     <Label text="P3"
            GridPane.columnIndex="20" GridPane.rowIndex="15" prefWidth="194.0"/>
 
-    <Label fx:id="dealerTotalLabel" text="Dealer Total: 0"
-           GridPane.columnIndex="10" GridPane.rowIndex="20" prefWidth="250.0"/>
-
-    <Label fx:id="playerTotalLabel" text="Player Total: 0"
-           GridPane.columnIndex="5" GridPane.rowIndex="20" prefWidth="194.0"/>
-
     <Label fx:id="waiting" text="..."
            GridPane.columnIndex="5" GridPane.rowIndex="21" prefWidth="194.0"/>
 

@@ -67,7 +67,7 @@ goto fail
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\lib\client-1.0-SNAPSHOT.jar;%APP_HOME%\lib\javafx-fxml-15.0.1-linux.jar;%APP_HOME%\lib\javafx-controls-15.0.1-linux.jar;%APP_HOME%\lib\javafx-controls-15.0.1.jar;%APP_HOME%\lib\javafx-graphics-15.0.1-linux.jar;%APP_HOME%\lib\javafx-graphics-15.0.1.jar;%APP_HOME%\lib\javafx-base-15.0.1-linux.jar;%APP_HOME%\lib\javafx-base-15.0.1.jar
+set CLASSPATH=%APP_HOME%\lib\client-1.0-SNAPSHOT.jar;%APP_HOME%\lib\javafx-fxml-15.0.1-mac.jar;%APP_HOME%\lib\javafx-controls-15.0.1-mac.jar;%APP_HOME%\lib\javafx-controls-15.0.1.jar;%APP_HOME%\lib\javafx-graphics-15.0.1-mac.jar;%APP_HOME%\lib\javafx-graphics-15.0.1.jar;%APP_HOME%\lib\javafx-base-15.0.1-mac.jar;%APP_HOME%\lib\javafx-base-15.0.1.jar
 
 
 @rem Execute client
