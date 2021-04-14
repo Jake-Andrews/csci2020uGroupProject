@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import javax.swing.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -22,8 +21,7 @@ public class Controller {
     int upperbound = 51;
     int playerCardTotal;
     int dealerCardTotal;
-    int test = 0;
-    int Bust = 21;
+
     private int count = 0;
     private int hiddenCard = 0;
 
@@ -44,8 +42,8 @@ public class Controller {
 
     FileInputStream blankFile;
 
-    List<ImageView> playerImages = new ArrayList<ImageView>();
-    List<ImageView> dealerImages = new ArrayList<ImageView>();
+    List<ImageView> playerImages = new ArrayList<>();
+    List<ImageView> dealerImages = new ArrayList<>();
 
     @FXML private ImageView dealerImg1;
     @FXML private ImageView dealerImg2;
@@ -67,47 +65,21 @@ public class Controller {
     //Bloats the controller
 
     //Testing some code to periodicly check if both clients have pressed stand/ready
-    public  javax.swing.Timer refresherTimer = null;
-    public void stopRefreshing() {
-        if (refresherTimer != null) {
-            refresherTimer.stop();
-            refresherTimer = null;
-        }
-    }
-    protected void startRefreshing() {
-        stopRefreshing();
-        refresherTimer = new Timer(1000, e -> {
-            //newItem.getPrice()
-            if (count % 2 == 0) {
-                waiting.setText("Waiting on P2..");
-            } else {waiting.setText("Waiting on P2...");}
-            String message = connection.sendMessage("END");
-            System.out.println(message);
-            if (message == "TRUE") {
-                stopRefreshing();
-            }
-        });
-        refresherTimer.start();
-    }
-    /*
-    public void onStartButtonClicked() {
-        Item newItem = new Item(newItemField.getText());
-        // here newItem should be added to a list of items which should be in the ItemGUI class
-        startRefreshing();
-    }
 
-    public void onStopButtonClicked() {
-        stopRefreshing();
-    }
-    */
     public boolean determineIfFaceCard(String Letter) {
-        if (Letter == "A" || Letter == "J" || Letter == "Q" || Letter == "K") {
-            return true;
-
-        } else {return false;}
+        /**
+         * @param Letter    indicates the card type
+         * @return true if the card is an Ace, King, Queen, or Jack
+         */
+        return Letter.equals("A") || Letter.equals("J") || Letter.equals("Q") || Letter.equals("K");
     }
 
     public String determineSuit(int cardValue) {
+        /**This method determines the suit of a card, based
+         * on modulo calculation and image file positions.
+         * @param cardValue     The value the card is worth.
+         * @return the first letter of the suit the card is.
+         */
         if (cardValue % 4 == 0) {
             return "C";
         } else if (cardValue % 4 == 1) {
@@ -120,6 +92,10 @@ public class Controller {
     }
 
     public String determineValue(int cardValue) {
+        /**This method returns the card value as a string
+         * @param cardValue     The value the card is worth.
+         * @return the card value as a string
+         */
         if (cardValue % 13 == 0) {
             return "2";
         } else if (cardValue % 13 == 1) {
@@ -150,9 +126,13 @@ public class Controller {
     }
 
     public int determineValueofFaceCards(String Symbol) {
-        if (Symbol == "A") {
+        /** This method returns how many points a given face card will be worth
+         * @param Symbol    The card type (king, queen, ace, jack)
+         * @return the value the face card would recieve in this game
+         */
+        if (Symbol.equals("A")) {
             return 1;
-        } else if (Symbol == "J" || Symbol == "Q" || Symbol == "K") {
+        } else if (Symbol.equals("J") || Symbol.equals("Q") || Symbol.equals("K")) {
             return 10;
         } else {
             System.out.println("error in face value determiniign");
@@ -162,6 +142,17 @@ public class Controller {
 
 
     public void gameOver() throws IOException {
+        /** Cleanup function when the game ends.
+         * This function times out a thread, and calculates
+         * who the winner of the game is. Then calls the appropriate
+         * end of game screen.
+         */
+        System.out.println("Game Over");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         if (playerCardTotal > 21) {
             System.out.println("player busted");
             Main.dealerWinScreen();
@@ -171,7 +162,7 @@ public class Controller {
         } else if (dealerCardTotal >= playerCardTotal) {
             System.out.println("dealer wins");
             Main.dealerWinScreen();
-        } else if (dealerCardTotal < playerCardTotal) {
+        } else {
             System.out.println("player wins");
             Main.playerWinScreen();
         }
@@ -179,7 +170,13 @@ public class Controller {
     }
 
     public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal) {
-
+        /**This method builds the default gameboard the user will see.
+         * @param Graphics          The images of the cards to display
+         * @param cardTotalLabel    Label to display card total
+         * @param hitCount          Number of times the player has hit
+         * @param cardValue         The value of the card
+         * @param cardTotal         The sum of the dealt cards
+         */
         drawnCard = determineValue(cardValue) + determineSuit(cardValue);
         System.out.println(drawnCard);
         try {
@@ -190,9 +187,9 @@ public class Controller {
             e.printStackTrace();
         }
 
-        if (determineIfFaceCard(determineValue(cardValue)) == true) {
+        if (determineIfFaceCard(determineValue(cardValue))) { //if facecard
             cardTotal += determineValueofFaceCards(determineValue(cardValue));
-        } else {
+        } else {                                                //if numerical card
             cardTotal += Integer.parseInt(determineValue(cardValue));
         }
 
@@ -204,21 +201,25 @@ public class Controller {
         } else {
             playerTotalLabel.setText("Player Total: " + cardTotal);
         }
-        //doesnt do anything, doesn't refrence the button declare in fxml file
-        if (hitCount == 2) {
-            P1Hit.setDisable(true);
-        }
+
         return cardTotal;
     }
 
     public int drawCard(List<ImageView> Graphics, Label cardTotalLabel, int hitCount, int cardValue, int cardTotal, boolean hidden) {
-
+        /**This method draws the cards the user will see to the screen.
+         * @param Graphics          The images of the cards to display
+         * @param cardTotalLabel    Label to display card total
+         * @param hitCount          Number of times the player has hit
+         * @param cardValue         The value of the card
+         * @param cardTotal         The sum of the dealt cards
+         * @param hidden            True if card is not to be displayed yet
+         */
         drawnCard = determineValue(cardValue) + determineSuit(cardValue);
         System.out.println(drawnCard);
         try {
             String currentDirectory = System.getProperty("user.dir");
             currentDirectory = currentDirectory + "/src/main/resources/PNG/";
-            if (hidden){
+            if (hidden){                                                                        //Draw back of card still facedown
                 hiddenCard = cardValue;
                 blankImage = new Image(new FileInputStream(currentDirectory + "back.png"));
             } else {blankImage = new Image(new FileInputStream(currentDirectory + drawnCard + ".png"));}
@@ -226,7 +227,7 @@ public class Controller {
             e.printStackTrace();
         }
 
-        if (determineIfFaceCard(determineValue(cardValue)) == true) {
+        if (determineIfFaceCard(determineValue(cardValue))) {
             cardTotal += determineValueofFaceCards(determineValue(cardValue));
         } else {
             cardTotal += Integer.parseInt(determineValue(cardValue));
@@ -240,15 +241,15 @@ public class Controller {
         } else {
             playerTotalLabel.setText("Player Total: " + cardTotal);
         }
-        //
-        if (hitCount == 2) {
-            P1Hit.setDisable(true);
-        }
+
         return cardTotal;
     }
 
     @FXML
-    public void hit(ActionEvent e) throws IOException {
+    public void hit(ActionEvent e) throws IOException, InterruptedException {
+        /**This method writes to the server the player wishes to hit.
+         * Then recieves a new card, and checks for a bust
+         */
         //Grab a card from the dealers deck
         String card = connection.sendMessage("HIT");
         System.out.println("Card from dealer: " + card);
@@ -264,8 +265,13 @@ public class Controller {
         //cardList.remove(0);
         playerCardTotal = drawCard(playerImages, PlayerTotal, PlayerHitCount, playerCard, playerCardTotal);
         PlayerHitCount += 1;
-        if (playerCardTotal > 21) {
-            //gameOver();
+        if (playerCardTotal > 21) { //if bust, games over
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException err) {
+                err.printStackTrace();
+            }
+            gameOver();
             System.out.println("You lose!");
             //System.exit(0);
         }
@@ -273,6 +279,11 @@ public class Controller {
 
     @FXML
     public void ready(ActionEvent e) {
+        /**
+         * Writes to the server when the user is ready to play.
+         * This method starts the game, by generating a seed and
+         * shuffling the deck
+         */
         //temp contains the randomnumberseed
         String temp = connection.sendMessage("READY");
         //turning it into a long
@@ -292,6 +303,10 @@ public class Controller {
     }
 
     public void drawDealerCard(boolean hidden) {
+        /**
+         * Draws a card for the dealers hand, and removes card
+         * from available list
+         */
         int DealerDrawResult = cardList.get(0);
         cardList.remove(0);
 
@@ -304,6 +319,10 @@ public class Controller {
 
     @FXML
     public void stand(ActionEvent e) throws IOException {
+        /**
+         * Writes to the server when the client wants to stand
+         * Writes STAND, and total to server so dealer can decide move
+         */
         //Player decided to stand, need to tell the server.
         //Server will recieve the users current score, ie:19 or 21...
         //Dealer will then start to hit until it reaches this number, assuming the number is <=21.
@@ -314,7 +333,7 @@ public class Controller {
         //String contains the
         System.out.println("Sending your score to the server.");
 
-        String message = "";
+        String message;
         message = connection.sendMessage("STAND," + temp);
         System.out.println(message);
 
@@ -325,18 +344,18 @@ public class Controller {
         //If false, other player has not pressed stand
         //false
         if (parts.get(0).equals("false")) {
-            //startRefreshing();
+            System.out.println("Wait for the other player to stand!");
         }
         //true,STAND,10
         //or true,STAND,10,34
         //10 - dealercardtotal, 34 carddealerprevious hit with
-        else if (parts.get(1).equalsIgnoreCase("STAND")) {
+        else if (parts.get(1).equalsIgnoreCase("STAND")) {                  //everyone is standing, dealer makes play
             if (parts.size() == 3) {
                 dealerCardTotal = Integer.parseInt(parts.get(2));
                 gameOver();
             } else {
                 int DealerDrawResult = Integer.parseInt(parts.get(3));
-
+                //Update dealer values
                 dealerCardTotal = drawCard(dealerImages, DealerTotal, DealerHitCount, DealerDrawResult, dealerCardTotal);
                 //DealerHitCount++;
                 dealerCardTotal = Integer.parseInt(parts.get(2));
@@ -345,7 +364,7 @@ public class Controller {
         }
         //HIT,cardvalues...to display,dealerTotal
         //true,HIT,0,9
-        else if (parts.get(1).equals("HIT")) {
+        else if (parts.get(1).equals("HIT")) {      //dealer still hits
             //int length = parts.length;
             dealerCardTotal = Integer.parseInt(parts.get(3));
             int DealerDrawResult = Integer.parseInt(parts.get(2));
@@ -360,8 +379,7 @@ public class Controller {
     @FXML
     public void initialize() throws FileNotFoundException {
         //Initilizing the connection with the server
-        //Can probably be put into another class later.
-        //As most of the initialize stuff can be
+
         try {
             connection = BlackjackClient.connect("localhost", 8001);
 
@@ -378,6 +396,10 @@ public class Controller {
     }
 
     public void shuffleDeck() {
+        /**
+         * Creates a list of indexes, then scrambles the order
+         * to simulate a shuffled deck
+         */
         //DRAW is the random generator
         //Uses the same seed as server. So the decks are the same
         for (int i = 0; i < upperbound; i++) {
@@ -395,6 +417,9 @@ public class Controller {
     }
 
     public void settingBlanks() throws FileNotFoundException {
+        /**
+         * Setting gameboard to blank space. No cards visible
+         */
         System.out.println("Working Directory = " + System.getProperty("user.dir"));
         String directory = System.getProperty("user.dir");
         directory = directory + "/src/main/resources/PNG/blank.png";

@@ -14,6 +14,10 @@ public class BlackjackServer {
     private static Thread socketThread;
 
     public static void start() {
+        /**Method to boot the server, set port and open socket for clients.
+         * Handles each client as a thread, with clientHandler within a
+         * linkedList
+         */
         //Boilerplate code was ripped from lab10 demo for handler and server. Changed as needed.
         System.out.println("Started server");
         int port = 8001;
@@ -52,6 +56,10 @@ public class BlackjackServer {
     }
 
     public void serverStop() throws IOException {
+        /**
+         * Disconnects all thread activity and closes
+         * the socket to follow best coding practices.
+         */
         System.out.println("Closing the server.");
         socketThread.interrupt();
         //just removes the sockets, is fine

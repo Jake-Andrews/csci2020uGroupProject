@@ -19,6 +19,10 @@ public class ClientHandler implements Runnable {
     //Handles each client and their messages
     @Override
     public void run() {
+        /** This method passively waits to read a message in from the client,
+         *handles the message and replies. Reading in either QUIT, READY, HIT, END
+         * or STAND as messages, then performing the appropriate action.
+         * */
         try {
             var out = new PrintWriter(socket.getOutputStream(), true);
             var in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -109,6 +113,10 @@ public class ClientHandler implements Runnable {
     }
 
     public void stop() {
+        /**
+         * This method is called to close the socket connection for best
+         * coding practices.
+         */
         try {
             socket.close();
         } catch (IOException e) {

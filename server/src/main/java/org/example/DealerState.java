@@ -15,7 +15,11 @@ import java.util.List;
 import java.util.Random;
 
 public class DealerState {
-
+    /**
+     * This class represents the table's dealer. This stores
+     * the dealers card total, player ready status,
+     * dealer hand, available cards, and player scores.
+     */
     private int upperbound = 51;
     private static int dealerCardTotal = 0;
     private static int ready = 0;
@@ -34,12 +38,19 @@ public class DealerState {
     public DealerState() {}
 
     public static String getState() {
+        /**
+         * @return true if game is active
+         */
         if (end == 1) {
             return "false";
         } else {return "true";}
     }
 
     public static String getCards() {
+        /** This method gives a new card to the dealer if required and adds to dealers hand
+         *  while updating the available cards.
+         * @return the message for the client
+         */
         String listOfCards = "";
         System.out.println("Before loop, value: " + dealerCardTotal);
 
@@ -76,14 +87,18 @@ public class DealerState {
     }
 
     public static int getCardValue(int cardValue) {
-
+        /**
+         * @param the index value of the card
+         * @return the value the card is worth in the game
+         */
         String drawnCard = determineValue(cardValue) + determineSuit(cardValue);
         //System.out.println(drawnCard);
         int value = 0;
 
+        //Face card
         if (determineIfFaceCard(determineValue(cardValue)) == true) {
             value = determineValueofFaceCards(determineValue(cardValue));
-        } else {
+        } else { //numerical card
             value = Integer.parseInt(determineValue(cardValue));
         }
 
@@ -91,6 +106,9 @@ public class DealerState {
     }
 
     public static void setEnd() {
+        /**
+         * Changes the game status to over.
+         */
         end++;
     }
 
@@ -99,6 +117,10 @@ public class DealerState {
     }
 
     public static int removeCard() {
+        /**Simulates taking the card off the top of the deck
+         * by removing the first index of the available list
+         * @return the card taken off the top
+         */
         int card = cardList.get(0);
         int value = getCardValue(card);
         System.out.println("Adding value to dealer: " + value);
@@ -110,6 +132,9 @@ public class DealerState {
     }
 
     public static int removeCardForPlayer() {
+        /**
+         * Simulates dealing a card to the player
+         */
         int card = cardList.get(0);
         cardList.remove(0);
 
@@ -120,12 +145,21 @@ public class DealerState {
         playerScores.add(score);
     }
     public static boolean determineIfFaceCard(String Letter) {
+        /**
+         * @param Letter    The letter the card starts with
+         * @return true if the card is a facecard
+         */
         if (Letter == "A" || Letter == "J" || Letter == "Q" || Letter == "K") {
             return true;
         } else {return false;}
     }
 
     public static String determineSuit(int cardValue) {
+        /** Assigns the suit of a card with a modulo
+         * calculation and image file positions.
+         * @param cardValue the index value of the card
+         * @return the first letter of the assigned suit.
+         */
         if (cardValue % 4 == 0) {
             return "C";
         } else if (cardValue % 4 == 1) {
@@ -138,6 +172,10 @@ public class DealerState {
     }
 
     public static String determineValue(int cardValue) {
+        /**
+         * @param cardValue     the index value of the card
+         * @return the string value of the card
+         */
         if (cardValue % 13 == 0) {
             return "2";
         } else if (cardValue % 13 == 1) {
@@ -168,6 +206,10 @@ public class DealerState {
     }
 
     public static int determineValueofFaceCards(String Symbol) {
+        /** Calculates the value of a face card
+         * @param Symbol    The first letter the card starts with
+         * @return the value a given face card is worth.
+         */
         if (Symbol == "A") {
             return 1;
         } else if (Symbol == "J" || Symbol == "Q" || Symbol == "K") {
@@ -180,10 +222,16 @@ public class DealerState {
     }
 
     public void ready() {
+        /**
+         * Changes the status of ready
+         */
         this.ready++;
     }
 
     public void initializeDeck()  {
+        /**
+         * Shuffles a fresh deck to start a game
+         */
         //When the first player connects, ready will == 1.
         //Therefore the random number seed doesn't get overwritten by the second  player
         if (ready == 1) {
@@ -209,6 +257,9 @@ public class DealerState {
     }
 
     public long getRandomNumberSeed() {
+        /**
+         * @return the generated seed value
+         */
         return randomNumberSeed;
     }
 }

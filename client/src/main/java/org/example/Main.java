@@ -32,14 +32,18 @@ public class Main extends Application {
     }
 
     public static void playerWinScreen() throws IOException {
-
+        /**
+         * UI screen to show the player has won.
+         */
         Parent rootWinScreen = FXMLLoader.load(Main.class.getResource("/FXML/playerwinscreen.fxml"));
         stage.setScene(new Scene(rootWinScreen, 800, 625));
         stage.setTitle("Win Screen");
     }
 
     public static void dealerWinScreen() throws IOException {
-
+        /**
+         * UI screen to show the dealer has won.
+         */
         Parent rootWinScreen = FXMLLoader.load(Main.class.getResource("/FXML/dealerwinscreen.fxml"));
         stage.setScene(new Scene(rootWinScreen, 800, 625));
         stage.setTitle("Win Screen");
