@@ -1,4 +1,9 @@
 # csci2020uGroupProject
+Group Members:
+Jake Andrews 100749083
+Andrew Clegg 100745892
+David Robertson 100751769
+Ethan Randle-Bragg 100742591
 
 1. Project Information 
 Scope of the project - Create a blackjack game that two players can play. 
@@ -17,5 +22,7 @@ The server and clients can be run from the command line using gradle run or thro
 3. Other resources:
 Refrenced TA Michael Valdron's lab 10 demo code for the server. 
 
-Need to add. Pictures. Maybe link to a google drive with the demo?
-Add zip file with project. 
+Video too large to add to github
+Link Here:
+https://drive.google.com/file/d/1d24FBL4bZ-HRY2T7lmUvo_CjwJ_dnegv/view?usp=sharing
+
